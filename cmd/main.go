@@ -9,31 +9,26 @@ import (
 )
 
 func main() {
-	// Definindo os parâmetros via flags
-	url := flag.String("url", "", "URL da API para o analysis")
-	method := flag.String("method", "GET", "Método HTTP para as requisições (GET ou POST)")
-	requests := flag.Int("requests", 100, "Número total de requisições a serem realizadas")
-	duration := flag.String("duration", "30s", "Duração do analysis (ex: 30s, 1m, 2h)")
-	payload := flag.String("payload", `{"key":"value"}`, "Payload para requisição POST")
+	url := flag.String("url", "https://test-api.k6.io/public/crocodiles/?format=api", "API URL for the benchmark")
+	method := flag.String("method", "GET", "HTTP method for the requests (GET or POST)")
+	requests := flag.Int("requests", 0, "Total number of requests to be performed")
+	duration := flag.String("duration", "30s", "Duration of the benchmark (e.g., 30s, 1m, 2h)")
+	payload := flag.String("payload", `{"key":"value"}`, "Payload for POST requests")
 
-	// Parse dos parâmetros
 	flag.Parse()
 
-	// Validando se a URL foi informada
 	if *url == "" {
-		log.Fatal("A URL deve ser informada!")
+		log.Fatal("the URL must be provided!")
 		os.Exit(1)
 	}
 
-	// Convertendo a duração para time.Duration
 	durationParsed, err := time.ParseDuration(*duration)
 	if err != nil {
-		log.Fatalf("Erro ao parsear duração: %v", err)
+		log.Fatalf("error parsing duration: %v", err)
 	}
 
-	// Executando o analysis
 	err = analysis.RunBenchmark(*url, *method, *requests, durationParsed, *payload)
 	if err != nil {
-		log.Fatalf("Erro ao executar o analysis: %v", err)
+		log.Fatalf("error running the analysis: %v", err)
 	}
 }

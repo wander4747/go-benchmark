@@ -17,5 +17,3 @@ RUN apk --no-cache add ca-certificates
 COPY --from=builder /app/benchmark /usr/local/bin/benchmark
 
 ENTRYPOINT ["benchmark"]
-
-#CMD ["-url", "https://example.com/api", "-requests", "1000", "-duration", "1m", "-method", "GET"]

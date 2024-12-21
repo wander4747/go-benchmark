@@ -9,7 +9,7 @@ import (
 func SendGetRequest(url string) (*http.Response, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("erro ao fazer GET: %v", err)
+		return nil, fmt.Errorf("error making GET request: %v", err)
 	}
 	return resp, nil
 }
@@ -17,10 +17,20 @@ func SendGetRequest(url string) (*http.Response, error) {
 func SendPostRequest(url string, payload string) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(payload)))
 	if err != nil {
-		return nil, fmt.Errorf("erro ao criar request POST: %v", err)
+		return nil, fmt.Errorf("error creating POST request: %v", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
-	return client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error making POST request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		return nil, fmt.Errorf("error in POST response, status code: %d", resp.StatusCode)
+	}
+
+	return resp, nil
 }
